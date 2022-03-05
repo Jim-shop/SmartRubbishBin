@@ -6,7 +6,8 @@
 
 - `ros`文件夹存放与ROS相关的代码
 - `CarModel`文件夹存放小车SolidWorks模型
-  
+- `Makefile`配置自动构建或执行自动化任务
+- `.gitignore`中填写不需要被git管理的文件
 
 ### TODO:
 
