@@ -1,9 +1,13 @@
+# 所需CMake版本
 cmake_minimum_required(VERSION 3.0.2)
+# 包名称。可以使用$(PROJECT_NAME)调用这个名称
 project(Example)
 
+# 以C++11标准编译
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
+# 设置构建所需要的软件包
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -13,16 +17,18 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+# 默认添加系统依赖
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
-
+# 启动Python模块支持
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 # catkin_python_setup()
 
 ################################################
+## 声明 ROS 信息、服务、动作                     ##
 ## Declare ROS messages, services and actions ##
 ################################################
 
@@ -67,6 +73,7 @@ find_package(catkin REQUIRED COMPONENTS
 #   Action2.action
 # )
 
+# 生成消息、服务时的依赖包
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
@@ -74,6 +81,7 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ################################################
+## 声明ROS动态参数配置                          ##
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
 
@@ -94,8 +102,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ###################################
+## catkin特定配置                 ##
 ## catkin specific configuration ##
 ###################################
+
+# 运行时依赖
 ## The catkin_package macro generates cmake config files for your package
 ## Declare things to be passed to dependent projects
 ## INCLUDE_DIRS: uncomment this if your package contains header files
@@ -110,9 +121,12 @@ catkin_package(
 )
 
 ###########
+## 构建   ##
 ## Build ##
 ###########
 
+# 添加头文件路径。
+# 当前程序包的头文件路径应位于其他文件路径之前
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -120,43 +134,51 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+# 声明C++库
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/Example.cpp
 # )
 
+# 添加库的CMake目标依赖
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+# 声明C++可执行文件
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/eg.cpp)
 
+# 重命名C++可执行程序
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
+# 添加可执行文件的CMake目标依赖
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+# 指定库、可执行文件的链接库
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
 #############
+## 安装     ##
 ## Install ##
 #############
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
+# 设置用于安装的可执行脚本
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
