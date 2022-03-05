@@ -13,10 +13,14 @@
 
 ### 开发环境依赖
 
+#### 软件
 - ROS1-Noetic 完整版（带Gazebo等）
 - SolidWorks 2021 + SW2URDF
 - Python 3.8.10（低版本未测试）
 - openCV 4.2.0（低版本未测试）
+  
+#### 硬件
+- USB摄像头（Ubuntu能直驱）
 
 
 ### 食用指南
