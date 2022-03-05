@@ -10,7 +10,6 @@
 // OpenCV2标准库
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 
 // 定义输入窗口名称
 static const std::string INPUT = "Input";
@@ -24,15 +23,14 @@ private:
     ros::NodeHandle nh;                    // ROS句柄
     image_transport::ImageTransport it;    // image_transport实例
     image_transport::Subscriber image_sub; // ROS图像接收器
-    // image_transport::Publisher image_pub; // ROS图像发布器
 public:
-    void image_process(cv::Mat& img)
+    void image_process(cv::Mat &img)
     { // 图像处理主函数
         cv::Mat img_out;
         cv::cvtColor(img, img_out, CV_RGB2GRAY);
-        cv::imshow(INPUT,img);
+        cv::imshow(INPUT, img);
         cv::imshow(OUTPUT, img_out);
-        cv::waitKey(5);
+        cv::waitKey(1);
     }
     void convert_callback(const sensor_msgs::ImageConstPtr &msg)
     {                                 /* sensor_msgs/Image图像格式转换->cv::Mat */
@@ -46,12 +44,12 @@ public:
             ROS_ERROR("cv_bridge exception: %s", e.what());
             return;
         }
-        image_process(cv_ptr->image);// 传给处理函数
+        image_process(cv_ptr->image); // 传给处理函数
+        ROS_INFO("Sent a image");
     }
     RGB_GRAY() : it(nh)
     {
-        image_sub = it.subscribe("camera/rgb/image_raw", 1, &RGB_GRAY::convert_callback, this);
-        // image_pub = it.publishe("",1);
+        image_sub = it.subscribe("camera/image", 1, &RGB_GRAY::convert_callback, this);
         cv::namedWindow(INPUT);
         cv::namedWindow(OUTPUT);
     }
