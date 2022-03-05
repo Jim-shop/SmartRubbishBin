@@ -2,12 +2,12 @@ MakefilePath	:= $(abspath $(lastword $(MAKEFILE_LIST)))
 RootPath		:= $(MakefilePath:Makefile=)
 
 .PHONY:
-	default clean ros
+	default only_source ros_build
 
-default: ros Makefile
+default: ros_build Makefile
 
-ros: Makefile
+ros_build: Makefile
 	cd $(RootPath)/ros && catkin_make 
 
-clean: Makefile
-	-rm *.cache
+only_source: Makefile
+	-cd $(RootPath)/ros && rm -r devel build

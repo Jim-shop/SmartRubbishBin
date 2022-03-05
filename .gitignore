@@ -1,6 +1,4 @@
-*.cache
-
-ros/devel
-ros/build
-
 .vscode
+
+/ros/devel
+/ros/build
