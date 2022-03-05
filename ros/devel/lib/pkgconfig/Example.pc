@@ -1,8 +1,0 @@
-prefix=/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel
-
-Name: Example
-Description: Description of Example
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

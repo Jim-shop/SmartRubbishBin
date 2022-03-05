@@ -10,4 +10,4 @@ ros: Makefile
 	cd $(RootPath)/ros && catkin_make 
 
 clean: Makefile
-	-rm *.tmp *.temp *.cache
+	-rm *.cache
