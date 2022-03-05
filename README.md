@@ -11,11 +11,12 @@
 - `.gitignore`中填写不需要被git管理的文件/文件夹
 
 
-### 开发环境配置
+### 开发环境依赖
 
 - ROS1-Noetic 完整版（带Gazebo等）
 - SolidWorks 2021 + SW2URDF
-- Python3
+- Python 3.8.10（低版本未测试）
+- openCV 4.2.0（低版本未测试）
 
 
 ### 食用指南
