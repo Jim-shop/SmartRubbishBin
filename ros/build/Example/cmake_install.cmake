@@ -52,3 +52,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Example" TYPE FILE FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src/Example/package.xml")
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/Example" TYPE PROGRAM FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/eg.py")
+endif()
+

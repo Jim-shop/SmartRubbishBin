@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     /* 第一步：执行ROS节点初始化
      * ros::init([传递命令行参数],节点名称)
      */
-    ros::init(argc, argv, "example");
+    ros::init(argc, argv, "exampleCPP");
 
     /* 第二步（可选）：创建ROS节点句柄
      */
