@@ -101,6 +101,53 @@ catkin_create_pkg 自定义功能包名 依赖项1 依赖项2 ...
     catkin_make
     ```
 
+### （二）Python脚本编写
+
+1. 可以在功能包文件夹中新建一个`scripts`目录用以存放脚本。
+
+    ```bash
+    cd 功能包文件夹
+    mkdir scripts
+    ```
+
+2. 在`scripts`文件夹中新建Python脚本，名字自拟。示例如下：
+
+    ```python
+    #! /bin/python3
+    """
+    上面一行按格式填写Python解释器路径，
+    这样，当赋予这个脚本文件可执行权限时，
+    在控制台敲入此文件名并回车，
+    控制台就能根据此行找到对应的解释器，
+    自动调用它执行这个脚本，而不需要我们手工指定。
+    """
+
+    import rospy #rospy在安装ros时已经安装好
+
+    if __name__ == "__main__":
+        # 第一步：给定节点名，初始化节点
+        rospy.init_node("examplePY")
+        rospy.loginfo("Hello world.")
+    ```
+
+3. 为Python文件添加可执行权限
+   
+    ```bash
+    chmod +x 脚本文件名.py
+    ```
+
+4. 编辑功能包文件夹下的`CMakeLists.txt`，参照其注释，修改编译配置：
+
+    ```cmake
+    catkin_install_python(PROGRAMS
+        scripts/脚本文件名.py
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    )
+    ```
+
+    > Python虽然不需要编译，但是可以通过此步生成环境配置，
+    > 方便互相调用。
+
 
 ## 四、执行功能包
 
@@ -129,5 +176,9 @@ catkin_create_pkg 自定义功能包名 依赖项1 依赖项2 ...
 3. 执行
    
     ```bash
-    rosrun 包名 编译成的名字
+    rosrun 包名 可执行文件
     ```
+
+    > 对于Cpp应用，`可执行文件`是编译成的名称；
+    > 
+    > 对于Python脚本，`可执行文件`就是`脚本名称.py`
