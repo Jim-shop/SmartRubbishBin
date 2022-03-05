@@ -1,9 +1,14 @@
-# SmartRubbishBin 
+# SmartRubbishBin（智能倾倒垃圾桶）
+ 
+  
+  
+### 仓库结构（暂定）
 
-## 智能倾倒垃圾桶  
+- `ros`文件夹存放与ROS相关的代码
+- `CarModel`文件夹存放小车SolidWorks模型
   
-  
-TODO:
+
+### TODO:
 
 - [ ] 机器人 SolidWorks 建模
 - [ ] 环境建模
