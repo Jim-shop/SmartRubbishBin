@@ -1,2 +1,8 @@
-.tmp .temp
+*.tmp
+*.temp
+*.cache
+
+ros/devel
+ros/build
+
 .vscode

@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/devel/lib/Example/Example_node"
-  "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/devel/lib/Example/Example_node.pdb"
+  "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel/lib/Example/Example_node"
+  "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel/lib/Example/Example_node.pdb"
   "CMakeFiles/Example_node.dir/src/eg.cpp.o"
 )
 

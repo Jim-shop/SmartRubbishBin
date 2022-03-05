@@ -1,10 +1,13 @@
-
+MakefilePath	:= $(abspath $(lastword $(MAKEFILE_LIST)))
+RootPath		:= $(MakefilePath:Makefile=)
 
 .PHONY:
-	default clean
+	default clean ros
 
-default:
-	@echo "todo..."
+default: ros Makefile
 
-clean:
-	-@rm *.tmp *.temp
+ros: Makefile
+	cd $(RootPath)/ros && catkin_make 
+
+clean: Makefile
+	-rm *.tmp *.temp *.cache

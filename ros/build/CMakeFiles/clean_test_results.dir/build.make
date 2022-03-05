@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src
+CMAKE_SOURCE_DIR = /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build
+CMAKE_BINARY_DIR = /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build
 
 # Utility rule file for clean_test_results.
 
@@ -71,6 +71,6 @@ CMakeFiles/clean_test_results.dir/clean:
 .PHONY : CMakeFiles/clean_test_results.dir/clean
 
 CMakeFiles/clean_test_results.dir/depend:
-	cd /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
+	cd /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/clean_test_results.dir/depend
 

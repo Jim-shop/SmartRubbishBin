@@ -7,4 +7,9 @@
 # new environment variables
 
 # modified environment variables
-export PWD='/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build'
+export CMAKE_PREFIX_PATH="/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PWD='/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src:/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src:$ROS_PACKAGE_PATH"

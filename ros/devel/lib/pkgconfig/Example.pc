@@ -1,4 +1,4 @@
-prefix=/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/devel
+prefix=/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel
 
 Name: Example
 Description: Description of Example

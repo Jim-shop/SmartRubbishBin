@@ -1,8 +1,8 @@
-# Install script for directory: /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src/Example
+# Install script for directory: /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src/Example
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install")
+  set(CMAKE_INSTALL_PREFIX "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "RelWithDebInfo")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -38,21 +38,21 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/Example.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/Example.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Example/cmake" TYPE FILE FILES
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/ExampleConfig.cmake"
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/ExampleConfig-version.cmake"
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/ExampleConfig.cmake"
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/ExampleConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Example" TYPE FILE FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src/Example/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Example" TYPE FILE FILES "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src/Example/package.xml")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/Example" TYPE PROGRAM FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/eg.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/Example" TYPE PROGRAM FILES "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/Example/catkin_generated/installspace/eg.py")
 endif()
 

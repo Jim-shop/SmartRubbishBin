@@ -67,14 +67,14 @@ set(Example_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(Example_SOURCE_PREFIX /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src/Example)
-  set(Example_DEVEL_PREFIX /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/devel)
+  set(Example_SOURCE_PREFIX /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src/Example)
+  set(Example_DEVEL_PREFIX /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/devel)
   set(Example_INSTALL_PREFIX "")
   set(Example_PREFIX ${Example_DEVEL_PREFIX})
 else()
   set(Example_SOURCE_PREFIX "")
   set(Example_DEVEL_PREFIX "")
-  set(Example_INSTALL_PREFIX /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install)
+  set(Example_INSTALL_PREFIX /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install)
   set(Example_PREFIX ${Example_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/lib;/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

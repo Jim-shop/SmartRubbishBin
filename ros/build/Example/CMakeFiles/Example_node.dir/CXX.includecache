@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src/Example/src/eg.cpp
+/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src/Example/src/eg.cpp
 ros/ros.h
-/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src/Example/src/ros/ros.h
+/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src/Example/src/ros/ros.h
 
 /opt/ros/noetic/include/ros/advertise_options.h
 ros/forwards.h

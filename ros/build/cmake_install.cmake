@@ -1,8 +1,8 @@
-# Install script for directory: /mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/src
+# Install script for directory: /mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install")
+  set(CMAKE_INSTALL_PREFIX "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "RelWithDebInfo")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -49,89 +49,89 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/_setup_util.py")
+   "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/_setup_util.py")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install" TYPE PROGRAM FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/_setup_util.py")
+file(INSTALL DESTINATION "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install" TYPE PROGRAM FILES "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/_setup_util.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/env.sh")
+   "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/env.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install" TYPE PROGRAM FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/env.sh")
+file(INSTALL DESTINATION "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install" TYPE PROGRAM FILES "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/env.sh")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/setup.bash;/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/local_setup.bash")
+   "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/setup.bash;/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/local_setup.bash")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/setup.bash"
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/local_setup.bash"
+file(INSTALL DESTINATION "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/setup.bash"
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/local_setup.bash"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/setup.sh;/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/local_setup.sh")
+   "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/setup.sh;/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/local_setup.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/setup.sh"
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/local_setup.sh"
+file(INSTALL DESTINATION "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/setup.sh"
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/local_setup.sh"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/setup.zsh;/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/local_setup.zsh")
+   "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/setup.zsh;/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/local_setup.zsh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/setup.zsh"
-    "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/local_setup.zsh"
+file(INSTALL DESTINATION "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/setup.zsh"
+    "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/local_setup.zsh"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install/.rosinstall")
+   "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install/.rosinstall")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/.rosinstall")
+file(INSTALL DESTINATION "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install" TYPE FILE FILES "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/catkin_generated/installspace/.rosinstall")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/gtest/cmake_install.cmake")
-  include("/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/Example/cmake_install.cmake")
+  include("/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/gtest/cmake_install.cmake")
+  include("/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/Example/cmake_install.cmake")
 
 endif()
 
@@ -143,5 +143,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

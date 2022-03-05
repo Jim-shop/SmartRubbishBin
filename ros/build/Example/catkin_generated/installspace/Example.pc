@@ -1,4 +1,4 @@
-prefix=/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install
+prefix=/mnt/c/Users/jim/Desktop/SmartRubbishBin/ros/install
 
 Name: Example
 Description: Description of Example
