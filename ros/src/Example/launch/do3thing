@@ -1,0 +1,7 @@
+<launch>
+    <!--pkg=功能包 type=被运行的功能包文件 name=为节点命名 output=设置日志的输出目标-->
+    <node pkg="Example" type="eg.py" name="launch_eg_py" output="screen" />
+    <node pkg="Example" type="Example_node" name="launch_eg_cpp" output="screen" />
+
+    <node pkg="turtlesim" type="turtlesim_node" name="t1" />
+</launch>

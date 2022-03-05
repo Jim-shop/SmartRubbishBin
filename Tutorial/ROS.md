@@ -54,9 +54,9 @@ catkin_create_pkg 自定义功能包名 依赖项1 依赖项2 ...
 > 以上是ROS构造工具的默认结构。
 > 为了方便，不要改动文件夹名和它们的用途。
 > 
-> 另外，还可以自行新建一个文件夹`scripts`，
-> 用来存放Python脚本。由于Python不需编译，
-> 因此此文件夹名字可以自定义，不必担心编译问题。
+> 另外，还可以自行新建文件夹：
+> - `scripts`，用来存放Python脚本。
+> - `launch`，用来存放launch文件，用于批量启动节点。
 
 ### （一）Cpp程序编写
 
@@ -151,7 +151,9 @@ catkin_create_pkg 自定义功能包名 依赖项1 依赖项2 ...
 
 ## 四、执行功能包
 
-1. 首先系统中要有一个启动的roscore。如果没有，执行：
+### （一）手工执行
+
+1. 首先系统中要有一个启动的`roscore`。如果没有，执行：
    
     ```bash
     roscore
@@ -182,3 +184,37 @@ catkin_create_pkg 自定义功能包名 依赖项1 依赖项2 ...
     > 对于Cpp应用，`可执行文件`是`编译成的名称`；
     > 
     > 对于Python脚本，`可执行文件`就是`脚本名称.py`
+
+### （二）批处理执行
+
+0. **【准备工作】** 在功能包文件夹下新建`launch`文件夹，在其中添加launch文件（名称自拟），文件内容示例：
+      
+    ```xml
+    <launch>
+        <!--pkg=功能包 type=被运行的功能包文件 name=为节点命名 output=设置日志的输出目标-->
+        <node pkg="Example" type="eg.py" name="launch_eg_py" output="screen" />
+        <node pkg="Example" type="Example_node" name="launch_eg_cpp" output="screen" />
+
+        <node pkg="turtlesim" type="turtlesim_node" name="t1" />
+    </launch>
+    ```
+
+1. 不需要特意启动`roscore`。`roslaunch`会自动启动它。
+
+2. 进入工作空间文件夹，载入`devel`文件夹下的环境配置脚本
+
+    ```bash
+    cd 工作空间
+    source ./devel/setup.bash
+    ```
+
+    > 如果使用的是`Zsh`，就载入`setup.zsh`。
+    >
+    > 注意，对于每个控制台，在运行下一步之前都要载入这个脚本。
+    > 如果懒得每次输入，可以把这指令加入到`~/.bashrc`，`~/.zshrc`等里面。 
+
+3. 运行launch文件
+
+    ```bash
+    roslaunch 包名 launch文件名
+    ```
