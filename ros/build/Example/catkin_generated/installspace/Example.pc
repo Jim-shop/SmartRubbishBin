@@ -1,0 +1,8 @@
+prefix=/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install
+
+Name: Example
+Description: Description of Example
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

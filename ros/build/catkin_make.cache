@@ -1,0 +1,2 @@
+Example
+-DCATKIN_DEVEL_PREFIX=/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/devel -DCMAKE_INSTALL_PREFIX=/mnt/c/Users/Jim/Desktop/SmartRubbishBin/ros/install -G Unix Makefiles
