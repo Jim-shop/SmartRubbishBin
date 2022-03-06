@@ -1,6 +1,6 @@
 .vscode
 
-/ros/devel
-/ros/devel_isolated
-/ros/build
-/ros/build_isolated
+ros/devel
+ros/devel_isolated
+ros/build
+ros/build_isolated
