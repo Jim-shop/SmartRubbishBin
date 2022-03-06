@@ -6,7 +6,7 @@
 - [ ] 机器人 SolidWorks 建模
 - [ ] 环境建模
 - [ ] ROS SLAM
-- [ ] GAZEBO 模拟
+- [ ] Gazebo 模拟
 - [ ] OpenCV 识别垃圾桶  
 
 
