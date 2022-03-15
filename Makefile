@@ -1,5 +1,7 @@
+# 获取这个Makefile的绝对路径
 MakefilePath	:= $(abspath $(lastword $(MAKEFILE_LIST)))
-RootPath		:= $(MakefilePath:Makefile=)
+# 获取Makefile所在的根目录（不带斜杠）
+RootPath		:= $(MakefilePath:/Makefile=)
 
 .PHONY:
 	default only_source ros_build
