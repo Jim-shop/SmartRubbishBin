@@ -4,3 +4,5 @@
 /ros/devel_isolated/
 /ros/build/
 /ros/build_isolated/
+
+/ros/src/opencv/res/*.weights

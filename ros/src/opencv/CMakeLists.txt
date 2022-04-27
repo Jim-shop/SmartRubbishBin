@@ -140,7 +140,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(grayImage src/grayImage.cpp)
+add_executable(yolo src/yolo.cpp)
 add_executable(imgPublisher src/imgPublisher.cpp)
 
 ## Rename C++ executable without prefix
@@ -151,10 +151,10 @@ add_executable(imgPublisher src/imgPublisher.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(grayImage robot_vision_generate_messages_cpp)
+# add_dependencies(yolo robot_vision_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(grayImage
+target_link_libraries(yolo
   ${catkin_LIBRARIES}
   ${OpenCV_LIBS}
 )

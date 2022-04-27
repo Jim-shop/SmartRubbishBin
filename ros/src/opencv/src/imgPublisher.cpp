@@ -2,19 +2,19 @@
 
 // ROS标准库
 #include "ros/ros.h"
-// CvBridge库
-#include "cv_bridge/cv_bridge.h"
 // 订阅和发布图像话题消息
 #include "image_transport/image_transport.h"
+// 将ROS图像转换为openCV图像
+#include "cv_bridge/cv_bridge.h"
 
-// OpenCV2标准库
-#include "opencv2/highgui/highgui.hpp"
+// OpenCV2 GUI
+#include "opencv2/highgui.hpp"
 
 int main(int argc, char *argv[])
 {
     if (argv[1] == nullptr)
     {
-        ROS_INFO("Video source required.");
+        ROS_INFO("Device ID required.");
         return 1;
     }
 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     int videoSource;
     if (!(videoSourceCmd >> videoSource))
     {
-        ROS_INFO("Invalid video source input.");
+        ROS_INFO("Cannot convert argument(videoSource) to integer.");
         return 1;
     }
 
@@ -36,24 +36,26 @@ int main(int argc, char *argv[])
     // 检查设备能否打开
     if (!cap.isOpened())
     {
-        ROS_INFO("Cannot open video device.");
+        ROS_INFO("Unable to open video source.");
         return 1;
     }
 
     cv::Mat frame;
     sensor_msgs::ImagePtr msg;
 
-    ros::Rate loopRate(60);
-    while (nh.ok())
+    ros::Rate loopRate(30);
+    while (ros::ok())
     {
         cap >> frame;
         if (!frame.empty())
         {
             msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", frame).toImageMsg();
             pub.publish(msg);
+            ROS_INFO("Sent a image");
         }
+        ros::spinOnce();
+        loopRate.sleep();
     }
 
-    ros::spinOnce();
-    loopRate.sleep();
+    return 0;
 }
