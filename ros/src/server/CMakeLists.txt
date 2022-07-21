@@ -134,7 +134,13 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
+<<<<<<< HEAD:ros/src/server/CMakeLists.txt
 # add_executable(${PROJECT_NAME}_node src/server_node.cpp)
+=======
+# add_executable(${PROJECT_NAME}_node src/contact_arduino_node.cpp)
+add_executable(server src/server.cpp)
+add_executable(keyop src/server.cpp)
+>>>>>>> 64c12038d8bfbdc13bee6036b285a08e6310bb1f:ros/src/contact_arduino/CMakeLists.txt
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -157,6 +163,9 @@ target_link_libraries(keyboard
 )
 add_executable(contact_arduino src/server.cpp)
 target_link_libraries(contact_arduino
+  ${catkin_LIBRARIES}
+)
+target_link_directories(keyop
   ${catkin_LIBRARIES}
 )
 

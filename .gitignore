@@ -1,8 +1,8 @@
 .vscode/
 
-/ros/devel/
-/ros/devel_isolated/
-/ros/build/
-/ros/build_isolated/
+/ROS/devel/
+/ROS/devel_isolated/
+/ROS/build/
+/ROS/build_isolated/
 
-/ros/src/opencv/res/*.weights
+/ROS/src/opencv/res/*.weights
