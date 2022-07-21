@@ -65,11 +65,11 @@ void readTwist()
     {
         float f[3]; // arduino 的 double 就是 float
         uint8_t i[sizeof(f)];
-    } twist_buf;
+    } twistBuf;
     static int_fast8_t currByteNo = -1;
     static uint8_t checkCode = 0xff;
     int currByte = Serial.read();
-    while (currByte > 0)
+    while (currByte >= 0)
     {
         switch (currByteNo)
         {
@@ -79,16 +79,16 @@ void readTwist()
             break;
 
         default:
-            twist_buf.i[currByteNo++] = currByte;
+            twistBuf.i[currByteNo++] = currByte;
             checkCode ^= currByte;
             break;
 
-        case sizeof(twist_buf):
+        case sizeof(twistBuf):
             if (checkCode == currByte)
             {
-                linear_x = twist_buf.f[0];
-                linear_y = twist_buf.f[1];
-                angular_z = twist_buf.f[2];
+                linear_x = twistBuf.f[0];
+                linear_y = twistBuf.f[1];
+                angular_z = twistBuf.f[2];
                 target1 = linear_x - angular_z * d_wheel / 2;
                 target2 = linear_x + angular_z * d_wheel / 2;
             }
