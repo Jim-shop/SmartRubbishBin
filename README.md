@@ -1,35 +1,23 @@
 # SmartRubbishBin（智能倾倒垃圾桶）
- 
-
-## TODO:
-
-- [ ] 机器人 SolidWorks 建模
-- [ ] 环境建模
-- [ ] ROS SLAM
-- [ ] Gazebo 模拟
-- [ ] OpenCV 识别垃圾桶  
 
 
 ## 仓库结构（暂定）
 
-- `ros`文件夹存放与ROS相关的代码
-- `CarModel`文件夹存放小车SolidWorks模型
-- `Tutorial`中记录一些学习笔记
-- `Makefile`配置自动构建或执行自动化任务
-- `.gitignore`中填写不需要被git管理的文件/文件夹
+- `📂Arduino`文件夹存放Arduino代码
+- `📂CarModel`文件夹存放小车SolidWorks模型
+- `📂ROS`文件夹存放与ROS相关的代码
+- `📂Tutorial`中记录一些学习笔记
+- `📄.gitignore`中填写不需要被git管理的文件/文件夹
+- `📄Makefile`配置自动构建或执行自动化任务
+- `📄README.md`就是本文件
 
 
-## 开发环境依赖
+## 开发环境
 
-### 软件
-- ROS1-Noetic 完整版（带Gazebo等）
-- SolidWorks 2021 + SW2URDF
-- Python 3.8.10（低版本未测试）
-- openCV 4.2.0（低版本未测试）
-  
-### 硬件
-- USB摄像头（Ubuntu能直驱）
-
+- Arduino IDE >= 1.8.19
+- ROS1-Noetic 完整版
+- SolidWorks >= 2021
+- OpenCV >= 4.2.0
 
 ## 食用指南
 
