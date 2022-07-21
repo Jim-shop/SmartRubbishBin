@@ -69,32 +69,33 @@ void readTwist()
     static int_fast8_t currByteNo = -1;
     static uint8_t checkCode = 0xff;
     int currByte = Serial.read();
-    if (currByte < 0)
-        return; // 未读到
-    switch (currByteNo)
+    while (currByte > 0)
     {
-    case -1:
-        if (Serial.read() == 0xff)
-            currByteNo++;
-        break;
-
-    default:
-        twist_buf.i[currByteNo++] = currByte;
-        checkCode ^= currByte;
-        break;
-
-    case sizeof(twist_buf):
-        if (checkCode == currByte)
+        switch (currByteNo)
         {
-            linear_x = twist_buf.f[0];
-            linear_y = twist_buf.f[1];
-            angular_z = twist_buf.f[2];
-            target1 = linear_x - angular_z * d_wheel / 2;
-            target2 = linear_x + angular_z * d_wheel / 2;
+        case -1:
+            if (Serial.read() == 0xff)
+                currByteNo++;
+            break;
+
+        default:
+            twist_buf.i[currByteNo++] = currByte;
+            checkCode ^= currByte;
+            break;
+
+        case sizeof(twist_buf):
+            if (checkCode == currByte)
+            {
+                linear_x = twist_buf.f[0];
+                linear_y = twist_buf.f[1];
+                angular_z = twist_buf.f[2];
+                target1 = linear_x - angular_z * d_wheel / 2;
+                target2 = linear_x + angular_z * d_wheel / 2;
+            }
+            currByteNo = -1;
+            checkCode = 0xff;
+            return;
         }
-        currByteNo = -1;
-        checkCode = 0xff;
-        break;
     }
 }
 
