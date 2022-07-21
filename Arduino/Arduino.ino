@@ -68,8 +68,7 @@ void readTwist()
     } twistBuf;
     static int_fast8_t currByteNo = -1;
     static uint8_t checkCode = 0xff;
-    int currByte = Serial.read();
-    while (currByte >= 0)
+    for (int currByte = Serial.read(); currByte >= 0; currByte = Serial.read())
     {
         switch (currByteNo)
         {
@@ -94,7 +93,7 @@ void readTwist()
             }
             currByteNo = -1;
             checkCode = 0xff;
-            return;
+            break;
         }
     }
 }
