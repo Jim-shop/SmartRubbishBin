@@ -18,12 +18,13 @@ const auto IN3 = 17;
 const auto IN4 = 16;
 
 //-----------------------------------算法参数
-const auto PERIOD = 5; // 电机控制函数的调用周期（毫秒）
+const auto CONTROL_PERIOD = 5; // 电机控制函数的调用周期（毫秒）
+const auto READ_PERIOD = 2; // 串口读取周期
 //可能需要多组PID
 const auto Kp = 10;
 const auto Ti = 5;
 const auto Td = 0;
-const float T = PERIOD;
+const float T = CONTROL_PERIOD;
 const float q0 = Kp * (1 + T / Ti + Td / T);
 const float q1 = -Kp * (1 + 2 * Td / T);
 const float q2 = Kp * Td / T;
@@ -110,7 +111,6 @@ void readTwist()
 //-----------------------------------Odom和tf数据发送
 void Publish(void)
 {
-
     float dis_left = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel;
     float dis_right = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel;
     float d_x = ((dis_left + dis_right) / 2) * sin(th_final);
@@ -168,99 +168,21 @@ int pidController2(float targetVelocity, float currentVelocity)
     return (int)u2;
 }
 
-void control()
-{
-    // 计算轮子1,2的速度
-    velocity1 = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel * (1000 / PERIOD);
-    velocity2 = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel * (1000 / PERIOD);
-    Publish();
-
-    // 将encoderVal1, encoderVal2归零，方便下一次计算速度
-    // encoderVal1 = 0;
-    // encoderVal2 = 0;
-    readTwist();
-
-    int output1 = 0; // pidController1(target1, velocity1);
-    int output2 = 0; // pidController2(target2, velocity2);
-    if (output1 > 0)
-    {
-        digitalWrite(IN1, LOW);
-        digitalWrite(IN2, HIGH);
-        analogWrite(PWM1, output1);
-    }
-    else
-    {
-        digitalWrite(IN1, HIGH);
-        digitalWrite(IN2, LOW);
-        analogWrite(PWM1, -output1);
-    }
-    if (output2 > 0)
-    {
-        digitalWrite(IN3, LOW);
-        digitalWrite(IN4, HIGH);
-        analogWrite(PWM2, output2);
-    }
-    else
-    {
-        digitalWrite(IN3, HIGH);
-        digitalWrite(IN4, LOW);
-        analogWrite(PWM2, -output2);
-    }
-}
-
 //-----------------------------------编码器中断函数
 inline void getEncoder1(void) // the previous model is not very accurate
 {
-
-    if (digitalRead(ENCODER_B1) == LOW) // A,B change to adjust to the line
-    {
-        if (digitalRead(ENCODER_A1) == LOW)
-        {
-            encoderVal1++;
-        }
-        else
-        {
-            encoderVal1--;
-        }
-    }
+    if (digitalRead(ENCODER_B1) ^ digitalRead(ENCODER_A1))
+        encoderVal1--;
     else
-    {
-        if (digitalRead(ENCODER_A1) == LOW)
-        {
-            encoderVal1--;
-        }
-        else
-        {
-            encoderVal1++;
-        }
-    }
+        encoderVal1++;
 }
 
 inline void getEncoder2(void)
 {
-
-    if (digitalRead(ENCODER_B2) == LOW)
-    {
-        if (digitalRead(ENCODER_A2) == LOW)
-        {
-            encoderVal2--;
-        }
-        else
-        {
-            encoderVal2++;
-        }
-    }
+    if (digitalRead(ENCODER_B2) ^ digitalRead(ENCODER_A2))
+        encoderVal2++;
     else
-    {
-        if (digitalRead(ENCODER_A2) == LOW)
-        {
-            encoderVal2++;
-        }
-        else
-        {
-            encoderVal2--;
-        }
-    }
+        encoderVal2--;
 }
 
 //-----------------------------------定时器初始化
@@ -288,8 +210,11 @@ void setup()
 {
     // 改变9,10管脚PWM频率
     setTimer1();
-    MsTimer2::set(PERIOD, control);
+
+    // 定时接收Twist信息
+    MsTimer2::set(READ_PERIOD, readTwist);
     MsTimer2::start();
+
     // 电机1
     pinMode(ENCODER_A1, INPUT);
     pinMode(ENCODER_B1, INPUT);
@@ -313,5 +238,40 @@ void setup()
 
 void loop()
 {
-    Serial.println(encoderVal1);
+    // 计算轮子1,2的速度
+    velocity1 = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel * (1000 / CONTROL_PERIOD);
+    velocity2 = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel * (1000 / CONTROL_PERIOD);
+    Publish();
+
+    // 将encoderVal1, encoderVal2归零，方便下一次计算速度
+    encoderVal1 = 0;
+    encoderVal2 = 0;
+
+    int output1 = 0; // pidController1(target1, velocity1);
+    int output2 = 0; // pidController2(target2, velocity2);
+    if (output1 > 0)
+    {
+        digitalWrite(IN1, LOW);
+        digitalWrite(IN2, HIGH);
+        analogWrite(PWM1, output1);
+    }
+    else
+    {
+        digitalWrite(IN1, HIGH);
+        digitalWrite(IN2, LOW);
+        analogWrite(PWM1, -output1);
+    }
+    if (output2 > 0)
+    {
+        digitalWrite(IN3, LOW);
+        digitalWrite(IN4, HIGH);
+        analogWrite(PWM2, output2);
+    }
+    else
+    {
+        digitalWrite(IN3, HIGH);
+        digitalWrite(IN4, LOW);
+        analogWrite(PWM2, -output2);
+    }
+    delay(CONTROL_PERIOD - 1);
 }
