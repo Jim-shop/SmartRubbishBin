@@ -9,7 +9,7 @@ RootPath		:= $(MakefilePath:/Makefile=)
 default: ros_build Makefile
 
 ros_build: Makefile
-	cd $(RootPath)/ros && catkin_make 
+	cd $(RootPath)/ROS && catkin_make
 
 only_source: Makefile
-	-cd $(RootPath)/ros && rm -r devel build devel_isolated build_isolated
+	-cd $(RootPath)/ROS && rm -r devel build devel_isolated build_isolated
