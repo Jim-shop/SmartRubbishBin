@@ -32,7 +32,6 @@ namespace KeyOp
 
     void start(ros::NodeHandle &nh)
     {
-
         tcgetattr(STDIN_FILENO, &origin); // 储存命令行原先状态
         signal(SIGINT, quit);             // 注册处理Ctrl+C的函数
 
