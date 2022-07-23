@@ -1,142 +1,94 @@
-#include <ros/ros.h>
-#include <geometry_msgs/Twist.h>
+#include "ros/ros.h"
+#include "geometry_msgs/Twist.h"
 #include <signal.h>
 #include <termios.h>
-#include <stdio.h>
 
-#define KEYCODE_W 0x77 
-#define KEYCODE_A 0x61
-#define KEYCODE_S 0x73
-#define KEYCODE_D 0x64
-#define KEYCODE_Q 0x71
-#define KEYCODE_SPACE 0x20
+/////////////////////////////////////////// 参数
+double linear_max = 2, angular_max = 4;
 
-class TeleopTurtle
+/////////////////////////////////////////// 全局变量
+termios origin; // 命令行原先的状态
+
+void quit(int)
 {
-public:
-  TeleopTurtle();
-  void keyLoop();
+    tcsetattr(STDIN_FILENO, TCSANOW, &origin);
+    ros::shutdown();
+    exit(0);
+}
 
-private:
-
-  
-  ros::NodeHandle nh_;
-  double linear_, angular_, l_scale_, a_scale_;
-  ros::Publisher twist_pub_;
-  
+enum class KEYCODE
+{
+    W = 0x77,
+    A = 0x61,
+    S = 0x73,
+    D = 0x64,
+    Q = 0x71,
+    SPACE = 0x20,
 };
 
-TeleopTurtle::TeleopTurtle():
-  linear_(0),
-  angular_(0),
-  l_scale_(2.0),
-  a_scale_(4.0)
+int main(int argc, char *argv[])
 {
-  nh_.param("scale_angular", a_scale_, a_scale_);
-  nh_.param("scale_linear", l_scale_, l_scale_);
+    ros::init(argc, argv, "keyop", ros::InitOption::NoSigintHandler);
+    ros::NodeHandle nh;
 
-  twist_pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 10);
-}
+    tcgetattr(STDIN_FILENO, &origin); // 储存命令行原先状态
+    signal(SIGINT, quit);             // 注册处理Ctrl+C的函数
 
-int kfd = 0;
-struct termios cooked, raw;
+    // 原生模式
+    termios raw;
+    memcpy(&raw, &origin, sizeof(termios));
+    raw.c_lflag &= ~(ICANON | ECHO); // 立即读取、不回显
+    tcsetattr(STDIN_FILENO, TCSANOW, &raw);
 
-void quit(int sig)
-{
-  (void)sig;
-  tcsetattr(kfd, TCSANOW, &cooked);
-  ros::shutdown();
-  exit(0);
-}
+    puts("Press W, A, S, D to move,\nSPACE to stop.");
+    puts("---------------------------");
 
-
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "teleop_turtle");
-  TeleopTurtle teleop_turtle;
-
-  signal(SIGINT,quit);
-
-  teleop_turtle.keyLoop();
-  
-  return(0);
-}
-
-
-void TeleopTurtle::keyLoop()
-{
-  char c;
-  bool dirty=false;
-
-
-  // get the console in raw mode                                                              
-  tcgetattr(kfd, &cooked);
-  memcpy(&raw, &cooked, sizeof(struct termios));
-  raw.c_lflag &=~ (ICANON | ECHO);
-  // Setting a new line, then end of file                         
-  raw.c_cc[VEOL] = 1;
-  raw.c_cc[VEOF] = 2;
-  tcsetattr(kfd, TCSANOW, &raw);
-
-  puts("Reading from keyboard");
-  puts("---------------------------");
-  puts("Use arrow keys to move the turtle.");
-
-
-  for(;;)
-  {
-    // get the next event from the keyboard  
-    if(read(kfd, &c, 1) < 0)
-    {
-      perror("read():");
-      exit(-1);
-    }
-
-    linear_=angular_=0;
-    ROS_INFO("value: 0x%02X\n", c);
-  
-    switch(c)
-    {
-      case KEYCODE_A:
-        ROS_DEBUG("LEFT");
-        angular_ = 1.0;
-        dirty = true;
-        break;
-      case KEYCODE_D:
-        ROS_DEBUG("RIGHT");
-        angular_ = -1.0;
-        dirty = true;
-        break;
-      case KEYCODE_W:
-        ROS_DEBUG("UP");
-        linear_ = 1.0;
-        dirty = true;
-        break;
-      case KEYCODE_S:
-        ROS_DEBUG("DOWN");
-        linear_ = -1.0;
-        dirty = true;
-        break;
-      case KEYCODE_SPACE:
-      linear_=angular_=0;
-      ROS_DEBUG("SPACE");
-        dirty = true;
-        break;
-    }
-   
-
+    auto pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
     geometry_msgs::Twist twist;
-    twist.angular.z = a_scale_*angular_;
-    twist.linear.x = l_scale_*linear_;
-    if(dirty ==true)
+    char c;
+    bool hasChanged;
+
+    while (true)
     {
-      twist_pub_.publish(twist);    
-      dirty=false;
+        // get the next event from the keyboard
+        if (read(STDIN_FILENO, &c, 1) < 0)
+        {
+            perror("read():");
+            exit(-1);
+        }
+        ROS_DEBUG("value: %#02X", c);
+
+        hasChanged = true;
+        switch (static_cast<KEYCODE>(c))
+        {
+        case KEYCODE::A:
+            twist.linear.x = 0;
+            twist.angular.z = angular_max;
+            break;
+        case KEYCODE::D:
+            twist.linear.x = 0;
+            twist.angular.z = -angular_max;
+            break;
+        case KEYCODE::W:
+            twist.linear.x = linear_max;
+            twist.angular.z = 0;
+            break;
+        case KEYCODE::S:
+            twist.linear.x = -linear_max;
+            twist.angular.z = 0;
+            break;
+        case KEYCODE::SPACE:
+            twist.linear.x = 0;
+            twist.angular.z = 0;
+            break;
+        default:
+            hasChanged = false;
+            break;
+        }
+
+        if (hasChanged == true)
+            pub.publish(twist);
     }
-  }
 
-
-  return;
+    return 0;
 }
-
-

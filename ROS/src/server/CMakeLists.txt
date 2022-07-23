@@ -135,7 +135,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/contact_arduino_node.cpp)
 add_executable(server src/server.cpp)
-add_executable(keyop src/server.cpp)
+add_executable(keyop src/keyop.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

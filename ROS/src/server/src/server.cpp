@@ -203,6 +203,7 @@ private: // 参数
 
 private: // 内部辅助
     ArduinoSerial &as;
+    ros::Subscriber sub;
     float linear_x, linear_y, angular_z;
 
     void callback(const geometry_msgs::Twist::ConstPtr &vel_cmd)
@@ -217,7 +218,7 @@ private: // 内部辅助
 public:
     TwistHandler(ros::NodeHandle &n, ArduinoSerial &as) : as{as}
     {
-        auto sub = new ros::Subscriber(n.subscribe<geometry_msgs::Twist>(subscribeTopicName, queueSize, &TwistHandler::callback, this));
+        sub = n.subscribe<geometry_msgs::Twist>(subscribeTopicName, queueSize, &TwistHandler::callback, this);
     }
 };
 
