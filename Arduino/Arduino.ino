@@ -19,7 +19,7 @@ const auto IN4 = 16;
 
 //-----------------------------------算法参数
 const auto CONTROL_PERIOD = 5; // 电机控制函数的调用周期（毫秒）
-const auto READ_PERIOD = 2; // 串口读取周期
+const auto READ_PERIOD = 2;    // 串口读取周期
 //可能需要多组PID
 const auto Kp = 10;
 const auto Ti = 5;
@@ -273,5 +273,5 @@ void loop()
         digitalWrite(IN4, LOW);
         analogWrite(PWM2, -output2);
     }
-    delay(CONTROL_PERIOD - 1);
+    delay(CONTROL_PERIOD);
 }

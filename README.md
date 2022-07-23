@@ -53,6 +53,7 @@ sudo apt install ros-noetic-serial
     cd 刚克隆下来的仓库路径/ros/
     catkin_make
     ```
+- 如果要生成Arduino固件，请直接使用Arduino IDE打开ino文件进行编译烧录。
 
 #### （2）批量构建
 将来可能有很多不同种类的文件/代码（当然现在只有ROS代码和Arduino代码两种），逐一编译生成很麻烦。因此在仓库根目录下配置了一个`Makefile`，在其中填入了各种文件的编译方法，只要在根目录下输入：
