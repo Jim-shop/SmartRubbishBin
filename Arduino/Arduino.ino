@@ -1,38 +1,10 @@
 #include <MsTimer2.h>
 #include <math.h>
-//-------------version1.0,this version is adjusted to enable the motor to move.
-/////////////////////////////////////
-////         参数设置部分          ////
-/////////////////////////////////////
 
-//-----------------------------------引脚设置
-const auto ENCODER_A1 = 14; //电机 1
-const auto ENCODER_B1 = 3;
-const auto ENCODER_A2 = 15; //电机 2
-const auto ENCODER_B2 = 2;
-const auto PWM1 = 9;
-const auto PWM2 = 11;
-const auto IN1 = 19;
-const auto IN2 = 18;
-const auto IN3 = 17;
-const auto IN4 = 16;
+#include "config.hpp"
+#include "constants.hpp"
 
-//-----------------------------------算法参数
-const auto CONTROL_PERIOD = 5; // 电机控制函数的调用周期（毫秒）
-const auto READ_PERIOD = 2;    // 串口读取周期
-//可能需要多组PID
-const auto Kp = 10;
-const auto Ti = 5;
-const auto Td = 0;
-const float T = CONTROL_PERIOD;
-const float q0 = Kp * (1 + T / Ti + Td / T);
-const float q1 = -Kp * (1 + 2 * Td / T);
-const float q2 = Kp * Td / T;
-
-//-----------------------------------设备参
-const auto pulse_round = 160; //一圈发出的脉冲数   //2it changed from 415 to 160
-const auto r_wheel = 0.025f;  // 轮子半径（米）
-const auto d_wheel = 0.21f;   // 轮子distance（米）
+#include "console.hpp"
 
 //-----------------------------------全局变量
 float target1;                //左 保守
@@ -101,7 +73,7 @@ void readTwist()
             }
             currByteNo = -1;
             checkCode = 0xff;
-            while (Serial.available() >= 0)
+            while (Serial.available() > 0)
                 Serial.read();
             return;
         }
@@ -188,21 +160,12 @@ inline void getEncoder2(void)
 //-----------------------------------定时器初始化
 inline void setTimer1(void)
 {
-    /*
-        Arduino定时器包括0,1,2三个。0,2是8位定时器，1是16位定时器。
-        设置定时器的方法是设置它们的寄存器Timer/Counter Control Register，即TCCR。
-        - Timer0是系统时钟；
-        - Timer1控制9、10管脚的PWM。
-        参见：https://blog.csdn.net/Wxx_Combo/article/details/113987176
-     */
-    cli(); // 暂时关闭中断，防止打断寄存器设置
-
-    /*  CS12 CS11 CS10 = 0 0 1 代表1分频，也就是不分频。
-        默认是0 0 0，代表没有时钟源，定时器不工作。*/
+    /* 参见：https://blog.csdn.net/Wxx_Combo/article/details/113987176 */
+    noInterrupts(); // 暂时关闭中断，防止打断寄存器设置
+    /* CS12 CS11 CS10 = 0 0 1 代表1分频 */
     TCCR1B &= 0b11111000; // 将CS12、CS11、CS10置零
     TCCR1B |= 0b00000001; // 将CS11置1
-
-    sei(); // 恢复中断
+    interrupts(); // 恢复中断
 }
 
 //-----------------------------------主函数
@@ -216,13 +179,13 @@ void setup()
     MsTimer2::start();
 
     // 电机1
-    pinMode(ENCODER_A1, INPUT);
-    pinMode(ENCODER_B1, INPUT);
+    pinMode(ENCODER_A1, INPUT_PULLUP);
+    pinMode(ENCODER_B1, INPUT_PULLUP);
     attachInterrupt(0, getEncoder2, CHANGE);
 
     // 电机2
-    pinMode(ENCODER_A2, INPUT);
-    pinMode(ENCODER_B2, INPUT);
+    pinMode(ENCODER_A2, INPUT_PULLUP);
+    pinMode(ENCODER_B2, INPUT_PULLUP);
     attachInterrupt(1, getEncoder1, CHANGE);
 
     pinMode(PWM1, OUTPUT);
@@ -233,11 +196,12 @@ void setup()
     pinMode(IN4, OUTPUT);
 
     // 设置串口频率
-    Serial.begin(57600, SERIAL_8E1);
+    Serial.begin(BAUDRATE, SERIAL_MOD);
 }
-
+// Console con;
 void loop()
 {
+    // con.parse();
     // 计算轮子1,2的速度
     velocity1 = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel * (1000 / CONTROL_PERIOD);
     velocity2 = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel * (1000 / CONTROL_PERIOD);
