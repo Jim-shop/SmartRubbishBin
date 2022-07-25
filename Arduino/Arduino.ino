@@ -7,8 +7,8 @@
 #include "console.hpp"
 
 //-----------------------------------全局变量
-float target1;                //左 保守
-float target2;                //右 速度
+float target1 = 1;                //左 保守
+float target2 = -1;                //右 速度
 volatile int encoderVal1 = 0; //编码器 1 值
 volatile int encoderVal2 = 0; //编码器 2 值
 float velocity1;              //转速 1
@@ -21,18 +21,8 @@ float u11, u12, u13;
 float u2;
 float u21, u22, u23;
 
-union twist_buf
-{
-    float f[3]; // arduino 的 double 就是 float
-    uint8_t i[sizeof(f)];
-};
 float linear_x = 1, linear_y = -1, angular_z = 0;
 
-union odom_buf
-{
-    float f[5]; // arduino 的 double 就是 float
-    uint8_t i[sizeof(f)];
-};
 /////////////////////////////////////
 ////         程序代码部分          ////
 /////////////////////////////////////
@@ -73,8 +63,6 @@ void readTwist()
             }
             currByteNo = -1;
             checkCode = 0xff;
-            while (Serial.available() > 0)
-                Serial.read();
             return;
         }
     }
@@ -94,19 +82,18 @@ void Publish(void)
     y_final += d_y;
     th_final += d_th;
 
+    union
+    {
+        float f[5]; // arduino 的 double 就是 float
+        uint8_t i[sizeof(f)];
+    } buf{.f = {linear_x, y_final, th_final, velocity1, velocity2}};
+    // } buf{.f = {x_final, y_final, th_final, velocity1, velocity2}};
     uint8_t check_code = 0xff;
     Serial.write(&check_code, 1);
-    odom_buf buf;
-    buf.f[0] = linear_x; // x_final;
-    buf.f[1] = y_final;
-    buf.f[2] = th_final;
-    buf.f[3] = velocity1;
-    buf.f[4] = velocity2;
     Serial.write(buf.i, sizeof(buf));
-    for (int_fast8_t i = 0; i < sizeof(buf); i++)
+    for (size_t i = 0; i < sizeof(buf); i++)
         check_code ^= buf.i[i];
     Serial.write(&check_code, 1);
-    Serial.flush();
 }
 
 //-------------------------------control
@@ -165,7 +152,7 @@ inline void setTimer1(void)
     /* CS12 CS11 CS10 = 0 0 1 代表1分频 */
     TCCR1B &= 0b11111000; // 将CS12、CS11、CS10置零
     TCCR1B |= 0b00000001; // 将CS11置1
-    interrupts(); // 恢复中断
+    interrupts();         // 恢复中断
 }
 
 //-----------------------------------主函数
@@ -181,12 +168,12 @@ void setup()
     // 电机1
     pinMode(ENCODER_A1, INPUT_PULLUP);
     pinMode(ENCODER_B1, INPUT_PULLUP);
-    attachInterrupt(0, getEncoder2, CHANGE);
+    attachInterrupt(1, getEncoder1, CHANGE);
 
     // 电机2
     pinMode(ENCODER_A2, INPUT_PULLUP);
     pinMode(ENCODER_B2, INPUT_PULLUP);
-    attachInterrupt(1, getEncoder1, CHANGE);
+    attachInterrupt(0, getEncoder2, CHANGE);
 
     pinMode(PWM1, OUTPUT);
     pinMode(PWM2, OUTPUT);
@@ -211,8 +198,8 @@ void loop()
     encoderVal1 = 0;
     encoderVal2 = 0;
 
-    int output1 = 0; // pidController1(target1, velocity1);
-    int output2 = 0; // pidController2(target2, velocity2);
+    int output1 = pidController1(target1, velocity1);
+    int output2 = pidController2(target2, velocity2);
     if (output1 > 0)
     {
         digitalWrite(IN1, LOW);
