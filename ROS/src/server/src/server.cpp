@@ -4,16 +4,27 @@
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/TransformStamped.h"
+#include "std_msgs/Bool.h"
 #include "tf/tf.h"
 #include "tf/transform_broadcaster.h"
 #include <thread>
 #include <vector>
 #include <initializer_list>
 
+float d_wheel = 0.21;
+std_msgs::Bool pull_trigger;
+
+std_msgs::Bool state; // the message from arduino which indicates whether the car is turning over the trash bin
+
+void triggerCallback(const std_msgs::Bool::ConstPtr recv_trigger)
+{
+    pull_trigger.data = recv_trigger->data;
+}
+
 class ArduinoSerial
 {
 private:                                                // 参数
-    const std::string port{"/dev/ttyUSB0"};             // 端口号（以后可以改成端口别名）
+    const std::string port{"/dev/ttyUSB1"};             // 端口号（以后可以改成端口别名）
     const unsigned int baud{57600};                     // 波特率
     const unsigned int timeout{5000};                   // 延时ms
     const serial::parity_t parity{serial::parity_even}; // 偶校验
@@ -64,6 +75,29 @@ public:
         s.close();
     }
 
+    enum DataType : uint8_t
+    {
+        Twist = 0xa0,
+        Bool = 0xa1,
+    };
+
+    void send(DataType dataType, std::initializer_list<uint8_t> const &il)
+    {
+        uint8_t sentBuf[3 + il.size() + 2];
+        uint8_t &startCode1 = sentBuf[0];
+        uint8_t &startCode2 = sentBuf[1];
+        uint8_t &typeCode = sentBuf[2];
+        uint8_t &data[il.size()] = &sentBuf[3];
+        uint8_t &checkCode1 = sentBuf[3 + il.size() + 0];
+        uint8_t &checkCode2 = sentBuf[3 + il.size() + 1];
+
+        startCode1 = 0x55, startCode2 = 0xaa, typeCode = dataType;
+        for (data : il)
+            sentBuf[++pos] = data;
+        checkCode1 = checkCode2 = 0x55;
+        for (pos = 0; pos < 3 + il.size(); pos++)
+            sentBuf[3 + il.size()]
+    }
     void send(std::initializer_list<float> const &il)
     {
         uint8_t check_code = 0xff; // 校验码
@@ -116,7 +150,7 @@ public:
 class OdomHandler
 {
 private: // 参数
-    const std::string publishTopicName = "msg";
+    const std::string publishTopicName = "odom";
     const size_t queueSize = 10;
     const size_t interval = 10000; // 轮询间隔us
 
@@ -142,43 +176,47 @@ private: // 内部辅助
         std::cout << "x_final: " << x_final << std::endl
                   << "y_final: " << y_final << std::endl
                   << "th_final: " << th_final << std::endl
-                  << "velocity1:" << velocity1 << std ::endl 
-                  << "velocity2" << velocity2 << std ::endl 
+                  << "velocity1: " << velocity1 << std ::endl
+                  << "velocity2: " << velocity2 << std ::endl
                   << std::endl;
         usleep(interval);
         return true;
     }
     void publish()
     {
-        ros::Time now = ros::Time::now();
+        // ros::Time now = ros::Time::now();
 
-        odom_quat.x = 0.0;
-        odom_quat.y = 0.0;
-        odom_quat.z = sin(th_final / 2);
-        odom_quat.w = cos(th_final / 2);
+        // // odom_quat.x = 0.0;
+        // // odom_quat.y = 0.0;
+        // // odom_quat.z = sin(th_final / 2);
+        // // odom_quat.w = cos(th_final / 2);
+        // geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th_final);
 
-        // tf
-        odom_trans.header.stamp = now;
-        odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "base_footprint";
-        odom_trans.transform.translation.x = x_final;
-        odom_trans.transform.translation.y = y_final;
-        odom_trans.transform.translation.z = 0;
-        odom_trans.transform.rotation = odom_quat;
-        odom_broadcaster.sendTransform(odom_trans);
+        // // tf
+        // odom_trans.header.stamp = now;
+        // odom_trans.header.frame_id = "odom";
+        // odom_trans.child_frame_id = "base_link";
+        // odom_trans.transform.translation.x = x_final;
+        // odom_trans.transform.translation.y = y_final;
+        // odom_trans.transform.translation.z = 0;
+        // odom_trans.transform.rotation = odom_quat;
+        // odom_broadcaster.sendTransform(odom_trans);
 
-        // nav
-        odom.header.stamp = now;
-        odom.header.frame_id = "odom";
-        odom.child_frame_id = "base_footprint";
-        odom.pose.pose.position.x = x_final;
-        odom.pose.pose.position.y = y_final;
-        odom.pose.pose.position.z = 0;
-        odom.pose.pose.orientation = odom_quat;
-        double averspeed = (velocity1 + velocity2) / 2;
-        odom.twist.twist.linear.x = averspeed * cos(th_final);
-        odom.twist.twist.linear.y = averspeed * sin(th_final);
-        pub.publish(odom);
+        // // nav
+        // odom.header.stamp = now;
+        // odom.header.frame_id = "odom";
+        // odom.child_frame_id = "base_link";
+        // odom.pose.pose.position.x = x_final;
+        // odom.pose.pose.position.y = y_final;
+        // odom.pose.pose.position.z = 0;
+        // odom.pose.pose.orientation = odom_quat;
+        // double averspeed = (velocity1 + velocity2) / 2;
+        // odom.twist.twist.linear.x = averspeed * cos(th_final);
+        // odom.twist.twist.linear.y = averspeed * sin(th_final);
+        // odom.twist.twist.angular.z = (velocity2 - velocity1)/d_wheel ;
+        // pub.publish(odom);
+        ros::NodeHandle action_node;
+        ros::Publisher action_publisher = action_node.advertise<std_msgs::Bool>("action_trigger", 10);
     }
     void looper()
     {
@@ -203,7 +241,6 @@ private: // 参数
 
 private: // 内部辅助
     ArduinoSerial &as;
-    ros::Subscriber sub;
     float linear_x, linear_y, angular_z;
 
     void callback(const geometry_msgs::Twist::ConstPtr &vel_cmd)
@@ -218,19 +255,22 @@ private: // 内部辅助
 public:
     TwistHandler(ros::NodeHandle &n, ArduinoSerial &as) : as{as}
     {
-        sub = n.subscribe<geometry_msgs::Twist>(subscribeTopicName, queueSize, &TwistHandler::callback, this);
+        auto sub = new ros::Subscriber(n.subscribe<geometry_msgs::Twist>(subscribeTopicName, queueSize, &TwistHandler::callback, this));
     }
 };
 
 int main(int argc, char *argv[])
 {
+    pull_trigger.data = false;
     ros::init(argc, argv, "contact_arduino");
     ros::NodeHandle n;
+
+    ros::Subscriber trigger_subscriber = n.subscribe<std_msgs::Bool>("pull_trigger", 10, triggerCallback);
 
     ArduinoSerial as;
 
     TwistHandler th(n, as);
-    OdomHandler oh(n, as);
+    // OdomHandler oh(n, as);    --------------------I changed because it doesn't need the help from here  7.25
 
     ros::spin();
     return 0;
