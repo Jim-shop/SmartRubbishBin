@@ -42,42 +42,39 @@ void read()
 
     static DataType currMod;
     static int_fast8_t currByteNo = -3;
+    static bool needReset = false, needFlushInput = false;
     static uint8_t checkCode1 = 0x55 ^ 0xaa, checkCode2 = 0x55 + 0xaa;
     static TwistBuf twistBuf;
     static bool boolBuf;
 
-    for (int currByte = Serial.read(); currByte >= 0; currByte = Serial.read())
+    for (uint8_t currByte = Serial.read(); currByte >= 0; currByte = Serial.read())
     {
         if (currByteNo < 0)
         {
             switch (currByteNo)
             {
             case -3:
-                if ((uint8_t)currByte == 0x55)
+                if (currByte == 0x55)
                     currByteNo++;
                 break;
 
             case -2:
-                if ((uint8_t)currByte == 0xaa)
+                if (currByte == 0xaa)
                     currByteNo++;
                 else
                     currByteNo = -3;
                 break;
 
             case -1:
-                switch ((uint8_t)currByte)
+                if (currByte == Twist || currByte == Bool)
                 {
-                case Twist:
-                case Bool:
                     currMod = (DataType)currByte;
                     currByteNo++;
-                    checkCode1 ^= (uint8_t)currByte;
-                    checkCode2 += (uint8_t)currByte;
-                    break;
-                default:
-                    currByteNo = -3;
-                    break;
+                    checkCode1 ^= currByte;
+                    checkCode2 += currByte;
                 }
+                else
+                    currByteNo = -3;
                 break;
             }
         }
@@ -88,20 +85,14 @@ void read()
                 switch (currByteNo)
                 {
                 case sizeof(twistBuf):
-                    if (checkCode1 == (uint8_t)currByte)
+                    if (checkCode1 == currByte)
                         currByteNo++;
                     else
-                    {
-                        currByteNo = -3;
-                        checkCode1 = 0x55 ^ 0xaa;
-                        checkCode2 = 0x55 + 0xaa;
-                        while (Serial.available() > 0)
-                            Serial.read();
-                    }
+                        needReset = true, needFlushInput = true;
                     break;
 
                 case sizeof(twistBuf) + 1:
-                    if (checkCode2 == (uint8_t)currByte)
+                    if (checkCode2 == currByte)
                     {
                         linear_x = twistBuf.f[0];
                         linear_y = twistBuf.f[1];
@@ -110,18 +101,15 @@ void read()
                         target2 = linear_x + angular_z * d_wheel / 2;
                     }
                     else
-                        while (Serial.available() > 0)
-                            Serial.read();
-                    currByteNo = -3;
-                    checkCode1 = 0x55 ^ 0xaa;
-                    checkCode2 = 0x55 + 0xaa;
+                        needFlushInput = true;
+                    needReset = true;
                     break;
 
                 default:
-                    twistBuf.i[currByteNo] = (uint8_t)currByte;
+                    twistBuf.i[currByteNo] = currByte;
                     currByteNo++;
-                    checkCode1 ^= (uint8_t)currByte;
-                    checkCode2 += (uint8_t)currByte;
+                    checkCode1 ^= currByte;
+                    checkCode2 += currByte;
                     break;
                 }
             }
@@ -130,37 +118,45 @@ void read()
                 switch (currByteNo)
                 {
                 case 1:
-                    if (checkCode1 == (uint8_t)currByte)
+                    if (checkCode1 == currByte)
                         currByteNo++;
                     else
                     {
-                        currByteNo = -3;
-                        checkCode1 = 0x55 ^ 0xaa;
-                        checkCode2 = 0x55 + 0xaa;
-                        while (Serial.available() > 0)
-                            Serial.read();
+                        needReset = true;
+                        needFlushInput = true;
                     }
                     break;
 
                 case 2:
-                    if (checkCode2 == (uint8_t)currByte)
+                    if (checkCode2 == currByte)
                         shouldPull = boolBuf;
                     else
-                        while (Serial.available() > 0)
-                            Serial.read();
-                    currByteNo = -3;
-                    checkCode1 = 0x55 ^ 0xaa;
-                    checkCode2 = 0x55 + 0xaa;
+                        needFlushInput = true;
+                    needReset = true;
                     break;
 
                 case 0:
-                    boolBuf = (uint8_t)currByte;
+                    boolBuf = currByte;
                     currByteNo++;
-                    checkCode1 ^= (uint8_t)currByte;
-                    checkCode2 += (uint8_t)currByte;
+                    checkCode1 ^= currByte;
+                    checkCode2 += currByte;
                     break;
                 }
             }
+        }
+
+        if (needReset)
+        {
+            currByteNo = -3;
+            checkCode1 = 0x55 ^ 0xaa;
+            checkCode2 = 0x55 + 0xaa;
+            needReset = false;
+        }
+        if (needFlushInput)
+        {
+            while (Serial.available() > 0)
+                Serial.read();
+            needFlushInput = false;
         }
     }
 }
@@ -196,7 +192,8 @@ void Publish(void)
         0xaa,
         isSuccess,
         0x55 ^ 0xaa ^ isSuccess,
-        uint8_t(0x55 + 0xaa + isSuccess)};
+        uint8_t(0x55 + 0xaa + isSuccess),
+    };
     Serial.write(sentbuf, sizeof(sentbuf));
 }
 
