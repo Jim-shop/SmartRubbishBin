@@ -19,6 +19,9 @@
 - ROS1-Noetic-Desktop-Full（自带OpenCV)
 - ros-noetic-serial包
 - SolidWorks == 2021
+- Arduino Uno 一片
+- L298N 一片
+- 激光雷达一个
 
 ## 食用指南
 
@@ -36,12 +39,32 @@ git clone git@github.com:Jim-shop/SmartRubbishBin.git
 
 ### 2. 配置环境
 
-#### （1）Arduino IDE 从官网下载安装，apt源得到的版本较为老旧。
-#### （2）Ros Noetic和Serial包参考以下命令安装：
+#### （1）Arduino IDE 从官网下载安装
+apt源得到的版本较为老旧。
+#### （2）Ros Noetic和Serial包参考以下命令安装
 ```bash
 sudo apt install ros-noetic-desktop-full
 sudo apt install ros-noetic-serial
 ```
+#### （3）给设备起别名，防止设备号乱了
+首先执行
+```bash
+lsusb
+```
+得到设备号如`10c4:ea60`。
+进入`cd /etc/udev/rules.d`进入目录，新建一个`usb.rules`文件，内容为
+```shell
+KERNEL=="ttyUSB*",ATTRS{idVendor}=="10c4",ATTRS{idProduct}=="ea60",MODE:="0777",SYMLINK+="laser"
+KERNEL=="ttyUSB*",ATTRS{idVendor}=="1a86",ATTRS{idProduct}=="7523",MODE:="0777",SYMLINK+="uno"
+```
+然后重启udev：
+```bash
+service udev reload
+service udev restart
+```
+重新插拔USB设备即可。
+
+
 
 ### 3. 编译
    
