@@ -7,8 +7,8 @@
 #include "console.hpp"
 
 //-----------------------------------全局变量
-float target1 = 1;                //左 保守
-float target2 = -1;                //右 速度
+float target1 = 1;            //左 保守
+float target2 = -1;           //右 速度
 volatile int encoderVal1 = 0; //编码器 1 值
 volatile int encoderVal2 = 0; //编码器 2 值
 float velocity1;              //转速 1
@@ -16,54 +16,150 @@ float velocity2;              //转速 2
 volatile float x_final = 0;
 volatile float y_final = 0;
 volatile float th_final = PI / 2;
-float u1;
-float u11, u12, u13;
-float u2;
-float u21, u22, u23;
+
+bool shouldPull = false;
 
 float linear_x = 1, linear_y = -1, angular_z = 0;
 
 /////////////////////////////////////
-////         程序代码部分          ////
+////         程序代码部分        ////
 /////////////////////////////////////
 
-//-----------------------------------Twist数据接收
-void readTwist()
+//-----------------------------------上位机数据接收
+void read()
 {
-    static union
+    enum DataType : uint8_t
+    {
+        Twist = 0xa0,
+        Bool = 0xa1,
+    };
+    union TwistBuf
     {
         float f[3]; // arduino 的 double 就是 float
         uint8_t i[sizeof(f)];
-    } twistBuf;
-    static int_fast8_t currByteNo = -1;
-    static uint8_t checkCode = 0xff;
+    };
+
+    static DataType currMod;
+    static int_fast8_t currByteNo = -3;
+    static uint8_t checkCode1 = 0x55 ^ 0xaa, checkCode2 = 0x55 + 0xaa;
+    static TwistBuf twistBuf;
+    static bool boolBuf;
+
     for (int currByte = Serial.read(); currByte >= 0; currByte = Serial.read())
     {
-        switch (currByteNo)
+        if (currByteNo < 0)
         {
-        case -1:
-            if ((uint8_t)currByte == 0xff)
-                currByteNo++;
-            break;
-
-        default:
-            twistBuf.i[currByteNo] = (uint8_t)currByte;
-            currByteNo++;
-            checkCode ^= (uint8_t)currByte;
-            break;
-
-        case sizeof(twistBuf):
-            if (checkCode == (uint8_t)currByte)
+            switch (currByteNo)
             {
-                linear_x = twistBuf.f[0];
-                linear_y = twistBuf.f[1];
-                angular_z = twistBuf.f[2];
-                target1 = linear_x - angular_z * d_wheel / 2;
-                target2 = linear_x + angular_z * d_wheel / 2;
+            case -3:
+                if ((uint8_t)currByte == 0x55)
+                    currByteNo++;
+                break;
+
+            case -2:
+                if ((uint8_t)currByte == 0xaa)
+                    currByteNo++;
+                else
+                    currByteNo = -3;
+                break;
+
+            case -1:
+                switch ((uint8_t)currByte)
+                {
+                case Twist:
+                case Bool:
+                    currMod = (DataType)currByte;
+                    currByteNo++;
+                    checkCode1 ^= (uint8_t)currByte;
+                    checkCode2 += (uint8_t)currByte;
+                    break;
+                default:
+                    currByteNo = -3;
+                    break;
+                }
+                break;
             }
-            currByteNo = -1;
-            checkCode = 0xff;
-            return;
+        }
+        else
+        {
+            if (currMod == Twist)
+            {
+                switch (currByteNo)
+                {
+                case sizeof(twistBuf):
+                    if (checkCode1 == (uint8_t)currByte)
+                        currByteNo++;
+                    else
+                    {
+                        currByteNo = -3;
+                        checkCode1 = 0x55 ^ 0xaa;
+                        checkCode2 = 0x55 + 0xaa;
+                        while (Serial.available() > 0)
+                            Serial.read();
+                    }
+                    break;
+
+                case sizeof(twistBuf) + 1:
+                    if (checkCode2 == (uint8_t)currByte)
+                    {
+                        linear_x = twistBuf.f[0];
+                        linear_y = twistBuf.f[1];
+                        angular_z = twistBuf.f[2];
+                        target1 = linear_x - angular_z * d_wheel / 2;
+                        target2 = linear_x + angular_z * d_wheel / 2;
+                    }
+                    else
+                        while (Serial.available() > 0)
+                            Serial.read();
+                    currByteNo = -3;
+                    checkCode1 = 0x55 ^ 0xaa;
+                    checkCode2 = 0x55 + 0xaa;
+                    break;
+
+                default:
+                    twistBuf.i[currByteNo] = (uint8_t)currByte;
+                    currByteNo++;
+                    checkCode1 ^= (uint8_t)currByte;
+                    checkCode2 += (uint8_t)currByte;
+                    break;
+                }
+            }
+            else
+            {
+                switch (currByteNo)
+                {
+                case 1:
+                    if (checkCode1 == (uint8_t)currByte)
+                        currByteNo++;
+                    else
+                    {
+                        currByteNo = -3;
+                        checkCode1 = 0x55 ^ 0xaa;
+                        checkCode2 = 0x55 + 0xaa;
+                        while (Serial.available() > 0)
+                            Serial.read();
+                    }
+                    break;
+
+                case 2:
+                    if (checkCode2 == (uint8_t)currByte)
+                        shouldPull = boolBuf;
+                    else
+                        while (Serial.available() > 0)
+                            Serial.read();
+                    currByteNo = -3;
+                    checkCode1 = 0x55 ^ 0xaa;
+                    checkCode2 = 0x55 + 0xaa;
+                    break;
+
+                case 0:
+                    boolBuf = (uint8_t)currByte;
+                    currByteNo++;
+                    checkCode1 ^= (uint8_t)currByte;
+                    checkCode2 += (uint8_t)currByte;
+                    break;
+                }
+            }
         }
     }
 }
@@ -86,8 +182,8 @@ void Publish(void)
     {
         float f[5]; // arduino 的 double 就是 float
         uint8_t i[sizeof(f)];
-    } buf{.f = {linear_x, y_final, th_final, velocity1, velocity2}};
-    // } buf{.f = {x_final, y_final, th_final, velocity1, velocity2}};
+        // } buf{.f = {linear_x, y_final, th_final, velocity1, velocity2}};
+    } buf{.f = {x_final, y_final, th_final, velocity1, velocity2}};
     uint8_t check_code = 0xff;
     Serial.write(&check_code, 1);
     Serial.write(buf.i, sizeof(buf));
@@ -99,8 +195,8 @@ void Publish(void)
 //-------------------------------control
 int pidController1(float targetVelocity, float currentVelocity)
 {
-    // static float u1;
-    // static float u11, u12, u13; these shouldn't be here
+    static float u1;
+    static float u11, u12, u13;
     u11 = targetVelocity - currentVelocity;
     u1 += q0 * u11 + q1 * u12 + q2 * u13;
     if (u1 > 255)
@@ -114,8 +210,8 @@ int pidController1(float targetVelocity, float currentVelocity)
 
 int pidController2(float targetVelocity, float currentVelocity)
 {
-    // static float u2;
-    // static float u21, u22, u23;these shouldn't be here
+    static float u2;
+    static float u21, u22, u23;
     u21 = targetVelocity - currentVelocity;
     u2 += q0 * u21 + q1 * u22 + q2 * u23;
     if (u2 > 255)
@@ -162,7 +258,7 @@ void setup()
     setTimer1();
 
     // 定时接收Twist信息
-    MsTimer2::set(READ_PERIOD, readTwist);
+    MsTimer2::set(READ_PERIOD, read);
     MsTimer2::start();
 
     // 电机1
