@@ -337,8 +337,8 @@ int main(int argc, char *argv[])
     ArduinoSerial as;
 
     TwistHandler th(n, as);
-    RodHandler rh(n, as);
-    // OdomHandler oh(n, as);    --------------------I changed because it doesn't need the help from here  7.25
+    // RodHandler rh(n, as);
+    OdomHandler oh(n, as); //--------------------I changed because it doesn't need the help from here  7.25
 
     ros::spin();
     return 0;

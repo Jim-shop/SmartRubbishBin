@@ -47,7 +47,8 @@ void read()
     static TwistBuf twistBuf;
     static bool boolBuf;
 
-    for (uint8_t currByte = Serial.read(); currByte >= 0; currByte = Serial.read())
+    int byteBuf = Serial.read();
+    for (uint8_t currByte = byteBuf; byteBuf >= 0; byteBuf = Serial.read(), currByte = byteBuf)
     {
         if (currByteNo < 0)
         {
@@ -92,6 +93,7 @@ void read()
                     break;
 
                 case sizeof(twistBuf) + 1:
+                    needReset = true;
                     if (checkCode2 == currByte)
                     {
                         linear_x = twistBuf.f[0];
@@ -102,7 +104,6 @@ void read()
                     }
                     else
                         needFlushInput = true;
-                    needReset = true;
                     break;
 
                 default:
@@ -128,11 +129,11 @@ void read()
                     break;
 
                 case 2:
+                    needReset = true;
                     if (checkCode2 == currByte)
                         shouldPull = boolBuf;
                     else
                         needFlushInput = true;
-                    needReset = true;
                     break;
 
                 case 0:
@@ -164,7 +165,7 @@ void read()
 //-----------------------------------Odom和tf数据发送
 void Publish(void)
 {
-    /*float dis_left = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel;
+    float dis_left = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel;
     float dis_right = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel;
     float d_x = ((dis_left + dis_right) / 2) * sin(th_final);
     float d_y = ((dis_left + dis_right) / 2) * cos(th_final);
@@ -181,20 +182,24 @@ void Publish(void)
         uint8_t i[sizeof(f)];
         // } buf{.f = {linear_x, y_final, th_final, velocity1, velocity2}};
     } buf{.f = {x_final, y_final, th_final, velocity1, velocity2}};
-    uint8_t check_code = 0xff;
-    Serial.write(&check_code, 1);
-    Serial.write(buf.i, sizeof(buf));
-    for (size_t i = 0; i < sizeof(buf); i++)
-        check_code ^= buf.i[i];
-    Serial.write(&check_code, 1);*/
-    uint8_t sentbuf[2 + sizeof(bool) + 2] = {
-        0x55,
-        0xaa,
-        isSuccess,
-        0x55 ^ 0xaa ^ isSuccess,
-        uint8_t(0x55 + 0xaa + isSuccess),
-    };
+    uint8_t sentbuf[2 + sizeof(buf) + 2];
+    sentbuf[0] = 0x55, sentbuf[1] = 0xaa;
+    memcpy(&sentbuf[2], buf.i, sizeof(buf));
+    uint8_t &checkCode1 = sentbuf[2 + sizeof(buf) + 0],
+            &checkCode2 = sentbuf[2 + sizeof(buf) + 1];
+    checkCode1 = checkCode2 = 0x55;
+    for (int i = 1; i < 2 + sizeof(buf); i++)
+        checkCode1 ^= sentbuf[i], checkCode2 += sentbuf[i];
     Serial.write(sentbuf, sizeof(sentbuf));
+    /*
+     uint8_t sentbuf[2 + sizeof(bool) + 2] = {
+         0x55,
+         0xaa,
+         isSuccess,
+         0x55 ^ 0xaa ^ isSuccess,
+         uint8_t(0x55 + 0xaa + isSuccess),
+     };
+     Serial.write(sentbuf, sizeof(sentbuf));*/
 }
 
 //-------------------------------control

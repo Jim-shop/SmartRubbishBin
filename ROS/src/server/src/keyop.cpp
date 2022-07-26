@@ -6,7 +6,7 @@
 namespace KeyOp
 {
     /////////////////////////////////////////// 参数
-    double linear_max = 2, angular_max = 4;
+    double linear_max = 1, angular_max = 15;
 
     /////////////////////////////////////////// 全局变量
     termios origin; // 命令行原先的状态
