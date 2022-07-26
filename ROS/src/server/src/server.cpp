@@ -11,12 +11,10 @@
 #include <vector>
 #include <initializer_list>
 
-std_msgs::Bool state; // the message from arduino which indicates whether the car is turning over the trash bin
-
 class ArduinoSerial
 {
 private:                                                // 参数
-    const std::string port{"/dev/ttyUSB1"};             // 端口号（以后可以改成端口别名）
+    const std::string port{"/dev/ttyUSB0"};             // 端口号（以后可以改成端口别名）
     const unsigned int baud{57600};                     // 波特率
     const unsigned int timeout{5000};                   // 延时ms
     const serial::parity_t parity{serial::parity_even}; // 偶校验
@@ -209,10 +207,10 @@ private: // 内部辅助
     {
         ros::Time now = ros::Time::now();
 
-        // odom_quat.x = 0.0;
-        // odom_quat.y = 0.0;
-        // odom_quat.z = sin(th_final / 2);
-        // odom_quat.w = cos(th_final / 2);
+        odom_quat.x = 0.0;
+        odom_quat.y = 0.0;
+        odom_quat.z = sin(th_final / 2);
+        odom_quat.w = cos(th_final / 2);
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th_final);
 
         // tf
@@ -288,16 +286,37 @@ private: // 参数
     const std::string subscribeTopicName = "pull_trigger";
     const std::string publishTopicName = "action_trigger";
     const size_t queueSize = 10;
+    const size_t interval = 10000; // 轮询间隔us
 
 private: // 内部辅助
     ArduinoSerial &as;
     ros::Subscriber pullSub;
     ros::Publisher actionPub;
-    float linear_x, linear_y, angular_z;
+    std_msgs::Bool needAction;
 
     void callback(const std_msgs::Bool::ConstPtr &pull_trigger)
     {
         as.send(as.Bool, std::vector<uint8_t>{{pull_trigger->data}});
+    }
+
+    bool receive()
+    {
+        auto ret = as.toTs<bool>(as.read(sizeof(bool)));
+        if (ret.size() != 1)
+            return false;
+        needAction.data = ret[0];
+        usleep(interval);
+        return true;
+    }
+    void publish()
+    {
+        actionPub.publish(needAction);
+    }
+    void looper()
+    {
+        while (true)
+            if (receive())
+                publish();
     }
 
 public:
@@ -305,6 +324,7 @@ public:
     {
         pullSub = n.subscribe<std_msgs::Bool>(subscribeTopicName, queueSize, &RodHandler::callback, this);
         actionPub = n.advertise<std_msgs::Bool>(publishTopicName, queueSize);
+        std::thread(&RodHandler::looper, this).detach();
     }
     ~RodHandler() {}
 };

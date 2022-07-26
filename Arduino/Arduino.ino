@@ -17,7 +17,8 @@ volatile float x_final = 0;
 volatile float y_final = 0;
 volatile float th_final = PI / 2;
 
-bool shouldPull = false;
+bool shouldPull = false; // 收到的，指示是否应该启动推杆
+bool isSuccess = false;  // 发送的，指示Arduino是否已经完成动作
 
 float linear_x = 1, linear_y = -1, angular_z = 0;
 
@@ -167,7 +168,7 @@ void read()
 //-----------------------------------Odom和tf数据发送
 void Publish(void)
 {
-    float dis_left = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel;
+    /*float dis_left = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel;
     float dis_right = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel;
     float d_x = ((dis_left + dis_right) / 2) * sin(th_final);
     float d_y = ((dis_left + dis_right) / 2) * cos(th_final);
@@ -189,7 +190,14 @@ void Publish(void)
     Serial.write(buf.i, sizeof(buf));
     for (size_t i = 0; i < sizeof(buf); i++)
         check_code ^= buf.i[i];
-    Serial.write(&check_code, 1);
+    Serial.write(&check_code, 1);*/
+    uint8_t sentbuf[2 + sizeof(bool) + 2] = {
+        0x55,
+        0xaa,
+        isSuccess,
+        0x55 ^ 0xaa ^ isSuccess,
+        uint8_t(0x55 + 0xaa + isSuccess)};
+    Serial.write(sentbuf, sizeof(sentbuf));
 }
 
 //-------------------------------control
