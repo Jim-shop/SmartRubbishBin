@@ -27,7 +27,7 @@ const auto d_wheel = 0.21f;   // 轮子distance（米）
 
 //-----------------------------------算法参数
 const auto CONTROL_PERIOD = 5; // 电机控制函数的调用周期（毫秒）
-const auto READ_PERIOD = 2;    // 串口读取周期
+const auto LOOP_PERIOD = 0;    // 编码器轮询周期（us）
 const auto Kp = 10;
 const auto Ti = 5;
 const auto Td = 0;

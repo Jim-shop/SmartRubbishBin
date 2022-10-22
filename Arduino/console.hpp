@@ -92,9 +92,9 @@ private:
             break;
 #if false
         case READ_ENCODERS:
-            Serial.print(readEncoder(LEFT));
+            Serial.print(encoderVal1);
             Serial.print(" ");
-            Serial.println(readEncoder(RIGHT));
+            Serial.println(encoderVal2);
             break;
         case RESET_ENCODERS:
             resetEncoders();

@@ -23,7 +23,7 @@ bool isSuccess = false;  // 发送的，指示Arduino是否已经完成动作
 float linear_x = 1, linear_y = -1, angular_z = 0;
 
 /////////////////////////////////////
-////         程序代码部分        ////
+////         程序代码部分          ////
 /////////////////////////////////////
 
 //-----------------------------------上位机数据接收
@@ -163,7 +163,7 @@ void read()
 }
 
 //-----------------------------------Odom和tf数据发送
-void Publish(void)
+inline void Publish(void)
 {
     float dis_left = 2 * PI * ((float)encoderVal1 / pulse_round) * r_wheel;
     float dis_right = 2 * PI * ((float)encoderVal2 / pulse_round) * r_wheel;
@@ -203,7 +203,7 @@ void Publish(void)
 }
 
 //-------------------------------control
-int pidController1(float targetVelocity, float currentVelocity)
+inline int pidController1(float targetVelocity, float currentVelocity)
 {
     static float u1;
     static float u11, u12, u13;
@@ -218,7 +218,7 @@ int pidController1(float targetVelocity, float currentVelocity)
     return (int)u1;
 }
 
-int pidController2(float targetVelocity, float currentVelocity)
+inline int pidController2(float targetVelocity, float currentVelocity)
 {
     static float u2;
     static float u21, u22, u23;
@@ -234,17 +234,23 @@ int pidController2(float targetVelocity, float currentVelocity)
 }
 
 //-----------------------------------编码器中断函数
-inline void getEncoder1(void) // the previous model is not very accurate
+long forwards[5], backwards[5];
+void getEncoder1(void) // the previous model is not very accurate
 {
-    if (digitalRead(ENCODER_B1) ^ digitalRead(ENCODER_A1))
-        encoderVal1--;
+    static auto lastTime = millis();
+    auto thisTime = millis();
+    auto diffTime = thisTime - lastTime;
+    if (diffTime > 4)
+        diffTime = 4;
+    if (digitalRead(ENCODER_A1) ^ digitalRead(ENCODER_B1))
+        backwards[diffTime]++;
     else
-        encoderVal1++;
+        forwards[diffTime]++;
+    lastTime = thisTime;
 }
-
-inline void getEncoder2(void)
+void getEncoder2(void)
 {
-    if (digitalRead(ENCODER_B2) ^ digitalRead(ENCODER_A2))
+    if (digitalRead(ENCODER_A2) ^ digitalRead(ENCODER_B2))
         encoderVal2++;
     else
         encoderVal2--;
@@ -268,18 +274,18 @@ void setup()
     setTimer1();
 
     // 定时接收Twist信息
-    MsTimer2::set(READ_PERIOD, read);
-    MsTimer2::start();
+    MsTimer2::set(CONTROL_PERIOD, control);
+    // MsTimer2::start();
 
     // 电机1
-    pinMode(ENCODER_A1, INPUT_PULLUP);
-    pinMode(ENCODER_B1, INPUT_PULLUP);
-    attachInterrupt(1, getEncoder1, CHANGE);
+    pinMode(ENCODER_A1, INPUT);
+    pinMode(ENCODER_B1, INPUT);
+    attachInterrupt(digitalPinToInterrupt(ENCODER_B1), getEncoder1, CHANGE);
 
     // 电机2
-    pinMode(ENCODER_A2, INPUT_PULLUP);
-    pinMode(ENCODER_B2, INPUT_PULLUP);
-    attachInterrupt(0, getEncoder2, CHANGE);
+    pinMode(ENCODER_A2, INPUT);
+    pinMode(ENCODER_B2, INPUT);
+    attachInterrupt(digitalPinToInterrupt(ENCODER_B2), getEncoder2, CHANGE);
 
     pinMode(PWM1, OUTPUT);
     pinMode(PWM2, OUTPUT);
@@ -292,7 +298,7 @@ void setup()
     Serial.begin(BAUDRATE, SERIAL_MOD);
 }
 // Console con;
-void loop()
+void control()
 {
     // con.parse();
     // 计算轮子1,2的速度
@@ -303,6 +309,7 @@ void loop()
     // 将encoderVal1, encoderVal2归零，方便下一次计算速度
     encoderVal1 = 0;
     encoderVal2 = 0;
+    read();
 
     int output1 = pidController1(target1, velocity1);
     int output2 = pidController2(target2, velocity2);
@@ -330,5 +337,27 @@ void loop()
         digitalWrite(IN4, LOW);
         analogWrite(PWM2, -output2);
     }
-    delay(CONTROL_PERIOD);
+}
+
+void loop()
+{
+    Serial.println("\nforward:");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("\t[");
+        Serial.print(i);
+        Serial.print("]");
+        Serial.print(forwards[i]);
+    }
+    Serial.println("\nbackward:");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("\t[");
+        Serial.print(i);
+        Serial.print("]");
+        Serial.print(backwards[i]);
+    }
+    encoderVal1 = forwards[0] * 0.9 + forwards[1] * 1 + forwards[2] * 1.3 + forwards[3] * 1.11 + forwards[4] * 1.12 -
+                  backwards[0] * 1.3 - backwards[1] * 1.05 - backwards[2] * 0.9 - backwards[3] * 1 - backwards[4] * 1;
+    // Serial.println(encoderVal1);
 }
